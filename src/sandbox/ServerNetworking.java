@@ -51,6 +51,7 @@ public class ServerNetworking
         }
         ServerNetworking server = new ServerNetworking(port);
         server.start();
+
     }
     
     public void start()
@@ -72,6 +73,10 @@ public class ServerNetworking
                 }
                 
                 ClientThread t = new ClientThread(socket);
+                while(true){
+                    t.run();
+                }
+                
             }
         } catch(IOException e){
         

@@ -1,3 +1,5 @@
+package sandbox;
+
 
 import java.net.*;
 import java.io.*;
@@ -16,8 +18,8 @@ public class ClientNetworking  {
          private ServerNetworking cg;
 
 
-	private String server;
-	private int port;
+	private String server = "104.39.20.10";
+	private int port = 44221;
 
 	
 	ClientNetworking(String server, int port) {
@@ -57,9 +59,10 @@ public class ClientNetworking  {
 			return false;
 		}
 
-		new ListenFromServer().start();
+                new ListenFromServer().run();
+                                       
+                return true;     
 		
-		return true;
 	}
 
 	
@@ -69,6 +72,7 @@ public class ClientNetworking  {
 	 */
 	void sendMessage(ChatMessage msg) {
 		try {
+                        sOutput = new ObjectOutputStream(socket.getOutputStream());
 			sOutput.writeObject(msg);
 		}
 		catch(IOException e) {
@@ -80,9 +84,10 @@ public class ClientNetworking  {
 	
 	public static void main(String[] args) {
 		
-	int portNumber = 1500;
-	String serverAddress = "localhost";
-	String userName = "Anonymous";
+            int portNumber = 44221;
+            String serverAddress = "104.39.20.10";
+            String userName = "Anonymous";
+            ChatMessage cm;
 
 		switch(args.length) {
 			case 3:
@@ -108,19 +113,24 @@ public class ClientNetworking  {
                 
 		// Client Object
 		ClientNetworking client = new ClientNetworking(serverAddress, portNumber, userName);
-
-                if(!client.start())
-			return;
-		
+                //ListenFromServer server = new ListenFromServer();
+                client.start();
+                if(!client.start()){
+                    return;
+                }
+				
 		Scanner scan = new Scanner(System.in);
-		// loop forever for message from the user
+                
+                while(true){
+                    cm = new ChatMessage(1, scan.nextLine());
+                    client.sendMessage(cm);
+                    //client.run();
+                }
+                
 		
 	}
-
-
-	class ListenFromServer extends Thread {
-
-		public void run() {
+        
+        public void run() {
 			while(true) {
 				try {
 					String msg = (String) sInput.readObject();
@@ -131,13 +141,18 @@ public class ClientNetworking  {
 					
 				}
 				catch(IOException e) {
-					System.out.println("Server has close the connection: " + e);
+					System.out.println("Server has closed the connection: " + e);
 					
 				}
 				catch(ClassNotFoundException e2) {
 				}
 			}
 		}
+
+
+	class ListenFromServer extends Thread {
+
+		
 	}
 }
 
