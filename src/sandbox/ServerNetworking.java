@@ -7,22 +7,23 @@ package sandbox;
 
 import java.io.*;
 import java.net.*;
+
+
 class ServerNetworking {
     public static void main(String argv[]) throws Exception {
-        int clientSentence=0;
-        int capitalizedSentence=0;
+        String clientSentence;
+        String capitalizedSentence;
         ServerSocket welcomeSocket = new ServerSocket(6789);
-       try{
-           Socket connectionSocket = welcomeSocket.accept(); 
-
-            DataInputStream inFromClient= new DataInputStream(connectionSocket.getInputStream());  
-            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+       
         while(true){                    
-            clientSentence = inFromClient.readInt();
-            System.out.println("Received: " + clientSentence);
-           // capitalizedSentence = clientSentence;  
-            outToClient.writeInt(capitalizedSentence);
+                    Socket connectionSocket = welcomeSocket.accept(); 
+                    BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                    DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());    
+                    clientSentence = inFromClient.readLine();  
+                    System.out.println("Received: " + clientSentence); 
+                    capitalizedSentence = clientSentence.toString() + '\n';  
+                    outToClient.writeBytes(capitalizedSentence);
         }      
-       }catch(Exception E){}
+    
        
     } } 

@@ -6,18 +6,20 @@ import java.io.*;
 import java.net.*; 
 class ClientNetworking{ 
     public static void main(String argv[]) throws Exception  {
-        int sentence;
-        int modifiedSentence;
-                Socket clientSocket = new Socket("localhost", 6789);   
+        String sentence; 
+        String modifiedSentence;  
+        BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in)); 
+        Socket clientSocket = new Socket("localhost", 6789);  
+        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());  
+        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); 
+        sentence = inFromUser.readLine();  
+        outToServer.writeBytes(sentence + '\n'); 
+        
+    
+        modifiedSentence = inFromServer.readLine();
+        Integer.parseInt(modifiedSentence);
 
-          DataInputStream inFromUser = new DataInputStream(clientSocket.getInputStream());  
-  
-          DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());  
-          DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());  
-
-        System.out.println("Enter a integer:");
-        sentence = inFromUser.readInt(); 
-        outToServer.writeInt(sentence);   
-        modifiedSentence = inFromServer.readInt();   
-        System.out.println("FROM SERVER: " + modifiedSentence);   
-        clientSocket.close();  } }
+        System.out.println("FROM SERVER: " + modifiedSentence);  
+        clientSocket.close(); 
+    
+    } }
